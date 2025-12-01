@@ -1,14 +1,51 @@
-name: Codacy Analysis CLI
+name: Continuous Integration
 
-on: ["push"]
+on:
+  push:
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
+  # Codacy Implementation
   codacy-analysis-cli:
     name: Codacy Analysis CLI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+  # Run fuzzing from 4.a.
+  fuzzing:
+    name: Automated Fuzzing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        # mining.py and report.py require these libraries
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy GitPython
+
+      - name: Run Fuzzing Script
+        # If this script fails (exit code 1), the pipeline stops here.
+        run: python fuzz.py
+      
+      - name: Upload Fuzzing Artifacts
+        if: always() # Run this even if fuzz.py fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-results
+          path: . # Uploads current directory, or change to specific file path
+          retention-days: 5
