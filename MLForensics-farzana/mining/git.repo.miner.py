@@ -21,8 +21,8 @@ import os
 def deleteRepo(dirName, type_):
     print(':::' + type_ + ':::Deleting ', dirName)
     try:
-        if os.path.exists(dirName):
-            shutil.rmtree(dirName)
+        if os.path.exists(dirName):    # integrity check
+            shutil.rmtree(dirName)    # data deletion
     except OSError:
         print('Failed deleting, will try manually')        
 
@@ -32,21 +32,21 @@ def makeChunks(the_list, size_):
         yield the_list[i:i+size_]
 
 def cloneRepo(repo_name, target_dir):
-    cmd_ = "git clone " + repo_name + " " + target_dir 
+    cmd_ = "git clone " + repo_name + " " + target_dir     # supply chain risk
     try:
-       subprocess.check_output(['bash','-c', cmd_])    
+       subprocess.check_output(['bash','-c', cmd_])    # uncontrolled execution    
     except subprocess.CalledProcessError:
        print('Skipping this repo ... trouble cloning repo:', repo_name )
 
 def dumpContentIntoFile(strP, fileP):
-    fileToWrite = open( fileP, 'w')
-    fileToWrite.write(strP )
+    fileToWrite = open( fileP, 'w')    # data integrity
+    fileToWrite.write(strP )    # data integrity
     fileToWrite.close()
-    return str(os.stat(fileP).st_size)
+    return str(os.stat(fileP).st_size)    # audit integrity
 
 def getPythonCount(path2dir): 
     usageCount = 0
-    for root_, dirnames, filenames in os.walk(path2dir):
+    for root_, dirnames, filenames in os.walk(path2dir):    # audit integrity
         for file_ in filenames:
             full_path_file = os.path.join(root_, file_) 
             if (file_.endswith('py') ):
@@ -61,20 +61,20 @@ def cloneRepos(repo_list):
         for repo_ in repo_batch:
             counter += 1 
             print('Cloning ', repo_ )
-            dirName = '/Users/arahman/FSE2021_ML_REPOS/GITHUB_REPOS/' + repo_.split('/')[-2] + '@' + repo_.split('/')[-1] 
-            cloneRepo(repo_, dirName )
+            dirName = '/Users/arahman/FSE2021_ML_REPOS/GITHUB_REPOS/' + repo_.split('/')[-2] + '@' + repo_.split('/')[-1]     # supply chain risk
+            cloneRepo(repo_, dirName )    # supply chain risk
             ### get file count 
-            all_fil_cnt = sum([len(files) for r_, d_, files in os.walk(dirName)])
+            all_fil_cnt = sum([len(files) for r_, d_, files in os.walk(dirName)])    # audit integrity
             if (all_fil_cnt <= 0):
-               deleteRepo(dirName, 'NO_FILES')
+               deleteRepo(dirName, 'NO_FILES')    # data deletion
             else: 
                py_file_count = getPythonCount( dirName  )
                prop_py = float(py_file_count) / float(all_fil_cnt)
                if(prop_py < 0.25):
-                   deleteRepo(dirName, 'LOW_PYTHON_' + str( round(prop_py, 5) ) )
+                   deleteRepo(dirName, 'LOW_PYTHON_' + str( round(prop_py, 5) ) )    # data deletion
             print("So far we have processed {} repos".format(counter) )
             if((counter % 10) == 0):
-                dumpContentIntoFile(str_, 'tracker_completed_repos.csv')
+                dumpContentIntoFile(str_, 'tracker_completed_repos.csv')    # data integrity
             elif((counter % 100) == 0):
                 print(str_)                
             print('#'*100)
@@ -82,7 +82,7 @@ def cloneRepos(repo_list):
 def getMLStats(repo_path):
     repo_statLs = []
     repo_count  = 0 
-    all_repos = [f.path for f in os.scandir(repo_path) if f.is_dir()]
+    all_repos = [f.path for f in os.scandir(repo_path) if f.is_dir()]    # audit integrity
     print('REPO_COUNT:', len(all_repos) )    
     for repo_ in all_repos:
         repo_count += 1 
@@ -99,15 +99,15 @@ def getMLLibraryUsage(path2dir):
             full_path_file = os.path.join(root_, file_) 
             if(os.path.exists(full_path_file)):
                 if (file_.endswith('py'))  :
-                    f = open(full_path_file, 'r', encoding='latin-1')
-                    fileContent  = f.read()
+                    f = open(full_path_file, 'r', encoding='latin-1')    # data poisoning
+                    fileContent  = f.read()    # data poisoning
                     fileContent  = fileContent.split('\n') 
                     fileContents = [z_.lower() for z_ in fileContent if z_!='\n' ]
                     # print(fileContent) 
                     for fileContent in fileContents:
-                        if('sklearn' in fileContent) or ('keras' in fileContent) or ('gym.' in fileContent) or ('pyqlearning' in fileContent) or ('tensorflow' in fileContent) or ('torch' in fileContent):
+                        if('sklearn' in fileContent) or ('keras' in fileContent) or ('gym.' in fileContent) or ('pyqlearning' in fileContent) or ('tensorflow' in fileContent) or ('torch' in fileContent):    # code analysis
                                 usageCount = usageCount + 1
-                        elif('rl_coach' in fileContent) or ('tensorforce' in fileContent) or ('stable_baselines' in fileContent) or ('tf.' in fileContent) :
+                        elif('rl_coach' in fileContent) or ('tensorforce' in fileContent) or ('stable_baselines' in fileContent) or ('tf.' in fileContent) :    # code analysis
                                 usageCount = usageCount + 1
                         # elif('rl_coach' in fileContent) or ('tensorforce' in fileContent) or ('stable_baselines' in fileContent) or ('keras' in fileContent) or ('tf' in fileContent):
                         #         usageCount = usageCount + 1
@@ -115,10 +115,10 @@ def getMLLibraryUsage(path2dir):
 
 
 def deleteRepos():
-    repos_df = pd.read_csv('DELETE_CANDIDATES_GITHUB_V2.csv')
+    repos_df = pd.read_csv('DELETE_CANDIDATES_GITHUB_V2.csv')    # data poisoning
     repos    = np.unique( repos_df['REPO'].tolist() ) 
     for x_ in repos:
-        deleteRepo( x_, 'ML_LIBRARY_THRESHOLD' )
+        deleteRepo( x_, 'ML_LIBRARY_THRESHOLD' )    # data deletion
 
 if __name__=='__main__':
     # repos_df = pd.read_csv('PARTIAL_REMAINING_GITHUB.csv')
