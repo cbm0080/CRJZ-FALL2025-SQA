@@ -21,11 +21,8 @@ In the fuzzer, we test different input methods into each of these functions.
 
 ## Forensics
 Integrated forensics within git.repo.miner.py by adding a logging function and modifying the files 
-- `miner/git.repo.miner.py` including the methods `deleteRepo`, `cloneRepo`, `dumpContentIntoFile`, `getPythonCount`, and `getMLLibraryUsage`
-- ``
-- ``
-- ``
-- ``
+- `miner/git.repo.miner.py` including the methods`deleteRepo`, `cloneRepo`, `dumpContentIntoFile`, `getPythonCount`, and `getMLLibraryUsage`
+
 We log important running information like where the function is looking, what it is doing, where and how much it is writing, any errors that occur, and more.
 
 ## Continuous Integration
