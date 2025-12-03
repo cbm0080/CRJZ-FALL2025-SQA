@@ -6,6 +6,7 @@ Results from `fuzz.py` in `Automated Fuzzing` job in each instance of continuous
 
 Continuous Integration also located in the actions tab.
 - Utilizes Codacy and runs the fuzzer automatically
+- Example Logs: https://github.com/cbm0080/TEAMNAME-FALL2025-SQA/actions/runs/19878334736/job/56970756895#logs
 
 # Notable information and what we learned
 ## Fuzzer
@@ -15,4 +16,5 @@ Integrated forensics within git.repo.miner.py by adding a logging function and m
 
 ## Continuous Integration
 Added continuous integration to the project via the use of Codacy, ensuring that smells like hardcoded values and unnecessary redundancy are checked for when new code is pushed to the repository via Github Actions. Of note is that this runs whenever code is pushed to any branch, as opposed to only main. The original implementation from workshop 7 only applied to the main branch, so further measures were taken ensure that all branches were subject to continuous integration.
+
 ## Conclusion
