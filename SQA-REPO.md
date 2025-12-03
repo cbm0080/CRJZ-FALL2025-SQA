@@ -14,5 +14,5 @@ Continuous Integration also located in the actions tab.
 Integrated forensics within git.repo.miner.py by adding a logging function and modifying the deleteRepo(), cloneRepo(), dumpContentIntoFile(), getPythonCount(), and getMLLibraryUsage() to log important running information like where the function is looking, what it is doing, where and how much it is writing, any errors that occur, and more.
 
 ## Continuous Integration
-
+Added continuous integration to the project via the use of Codacy, ensuring that smells like hardcoded values and unnecessary redundancy are checked for when new code is pushed to the repository via Github Actions. Of note is that this runs whenever code is pushed to any branch, as opposed to only main. The original implementation from workshop 7 only applied to the main branch, so further measures were taken ensure that all branches were subject to continuous integration.
 ## Conclusion
