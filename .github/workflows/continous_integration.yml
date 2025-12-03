@@ -2,8 +2,14 @@ name: Continuous Integration
 
 on:
   push:
+    # Do not run if the only changes are markdown files
+    paths-ignore:
+      - '**.md'
   pull_request:
     branches: [ "main" ]
+    # Do not run if the only changes are markdown files
+    paths-ignore:
+      - '**.md'
 
 jobs:
   # Codacy Implementation
